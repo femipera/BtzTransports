@@ -1,0 +1,45 @@
+# Arquivos de compilação e saída
+/bin/
+/obj/
+/node_modules/
+/.vs/
+/.idea/
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Arquivos específicos de configuração do ambiente
+.env
+
+# Dependências específicas de cada projeto (pode variar dependendo dos pacotes)
+*.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos gerados por ferramentas de build
+*.dll
+*.pdb
+*.exe
+*.msi
+*.zip
+*.7z
+
+# Arquivos de usuários do Visual Studio
+*.user
+*.suo
+*.cache
+*.vspscc
+*.vssscc
+*.pidb
+*.sqlite
+*.nupkg
+
+# Arquivos de configuração padrão
+*.config
+
+# Arquivos de saída de build
+[Dd]ebug/
+[Rr]elease/

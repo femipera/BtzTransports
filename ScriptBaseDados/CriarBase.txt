@@ -1,0 +1,104 @@
+IF NOT EXISTS (SELECT 1 FROM sys.databases WHERE name = 'DbBtzTransports')
+BEGIN
+    CREATE DATABASE DbBtzTransports;
+END;
+
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Usuarios')
+BEGIN
+    CREATE TABLE [DbBtzTransports].[dbo].[Usuarios] (
+        [Id] INT IDENTITY(1,1) NOT NULL,
+        [Nome] VARCHAR(100) NOT NULL,
+		[Senha] VARCHAR(50) NOT NULL,
+
+        CONSTRAINT [PK_Usuarios] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END;
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'CNHCategorias')
+BEGIN
+    CREATE TABLE [DbBtzTransports].[dbo].[CNHCategorias] (
+        [Id] INT IDENTITY(1,1) NOT NULL,
+        [Nome] VARCHAR(5) NOT NULL,
+
+        CONSTRAINT [PK_CNHCategorias] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END;
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Fabricantes')
+BEGIN
+    CREATE TABLE [DbBtzTransports].[dbo].[Fabricantes] (
+        [Id] INT IDENTITY(1,1) NOT NULL,
+        [Nome] VARCHAR(80) NOT NULL,
+
+        CONSTRAINT [PK_Fabricantes] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END;
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Combustiveis')
+BEGIN
+    CREATE TABLE [DbBtzTransports].[dbo].[Combustiveis] (
+        [Id] INT IDENTITY(1,1) NOT NULL,
+        [Nome] VARCHAR(80) NOT NULL,
+		[Preco] DECIMAL(10, 2) NOT NULL,
+
+        CONSTRAINT [PK_Combustiveis] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END;
+
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Veiculos')
+BEGIN
+    CREATE TABLE [DbBtzTransports].[dbo].[Veiculos] (
+        [Id] INT IDENTITY(1,1) NOT NULL,
+        [Nome] VARCHAR(100) NOT NULL,
+        [Placa] VARCHAR(7) NOT NULL,
+        [AnoFabricacao] DATETIME NOT NULL,
+        [CapacidadeMaximaTanque] INT NOT NULL,
+        [Observacao] VARCHAR(1000) NULL,
+        [FabricanteId] INT NOT NULL,
+        [CombustivelId] INT NOT NULL,
+
+        CONSTRAINT [PK_Veiculos] PRIMARY KEY CLUSTERED ([Id] ASC),
+
+        CONSTRAINT [FK_Veiculos_Combustiveis_CombustivelId] FOREIGN KEY([CombustivelId]) REFERENCES [dbo].[Combustiveis] ([Id]) ON DELETE CASCADE,
+        CONSTRAINT [FK_Veiculos_Fabricantes_FabricanteId] FOREIGN KEY([FabricanteId]) REFERENCES [dbo].[Fabricantes] ([Id]) ON DELETE CASCADE
+    );
+END;
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Abastecimentos')
+BEGIN
+    CREATE TABLE [DbBtzTransports].[dbo].[Abastecimentos](
+        [Id] INT IDENTITY(1,1) NOT NULL,
+		[MotoristaId] INT NOT NULL,
+        [VeiculoId] INT NOT NULL,
+        [CombustivelId] INT NOT NULL,
+        [Data] DATETIME NOT NULL,
+        [QuantidadeAbastecida] FLOAT NOT NULL,
+		[CombustivelPreco] DECIMAL(10, 2) NOT NULL,
+        
+        CONSTRAINT [PK_Abastecimentos] PRIMARY KEY CLUSTERED ([Id] ASC),
+
+        CONSTRAINT [FK_Abastecimentos_Veiculos_VeiculoId] FOREIGN KEY([VeiculoId]) REFERENCES [dbo].[Veiculos] ([Id]) ON DELETE CASCADE,
+		CONSTRAINT [FK_Abastecimentos_Combustiveis_CombustivelId] FOREIGN KEY([CombustivelId]) REFERENCES [dbo].[Combustiveis] ([Id]) ON DELETE NO ACTION,
+        CONSTRAINT [FK_Abastecimentos_Motoristas_MotoristaId] FOREIGN KEY([MotoristaId]) REFERENCES [dbo].[Motoristas] ([Id]) ON DELETE NO ACTION
+    );
+END;
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Motoristas')
+BEGIN
+    CREATE TABLE [DbBtzTransports].[dbo].[Motoristas](
+        [Id] INT IDENTITY(1,1) NOT NULL,
+		[Nome] VARCHAR(100) NOT NULL,
+        [CPF] VARCHAR(11) NOT NULL,
+        [NumeroCNH] VARCHAR(11) NOT NULL,
+        [DataNascimento] DATETIME NOT NULL,
+        [Status] BIT NOT NULL,
+        [CNHCategoriaId] INT NOT NULL,
+        
+
+        CONSTRAINT [PK_Motoristas] PRIMARY KEY CLUSTERED ([Id] ASC),
+
+        CONSTRAINT [FK_Motoristas_CNHCategorias_CNHCategoriaId] FOREIGN KEY([CNHCategoriaId]) REFERENCES [dbo].[CNHCategorias] ([Id]) ON DELETE CASCADE
+    );
+END;
